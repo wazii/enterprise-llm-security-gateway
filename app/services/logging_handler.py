@@ -1,4 +1,3 @@
-# app/services/logging_handler.py
 import logging
 import json
 from datetime import datetime
@@ -10,7 +9,7 @@ logger = logging.getLogger("Zaalima-Gateway-Logger")
 class AuditLogger:
     @staticmethod
     def log_incoming_request(user_id: str, prompt: str):
-        """AI Gateway par aane wale har prompt ka metadata console par log karega."""
+        """Logs metadata of every incoming prompt arriving at the AI Gateway."""
         payload = {
             "timestamp": datetime.utcnow().isoformat(),
             "event": "INBOUND_PROMPT",
@@ -22,7 +21,7 @@ class AuditLogger:
 
     @staticmethod
     def log_outgoing_response(user_id: str, response: str, status: str = "CLEAN"):
-        """LLM se aane wale final response ko securely log karega."""
+        """Securely logs the final response received from the LLM."""
         payload = {
             "timestamp": datetime.utcnow().isoformat(),
             "event": "OUTBOUND_RESPONSE",
