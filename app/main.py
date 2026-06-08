@@ -1,10 +1,16 @@
 from fastapi import FastAPI, Header, HTTPException
 from app.auth import create_access_token, verify_token
+from app.api_gateway import router as gateway_router
+from app.prompt_filter import router as prompt_router
 
 app = FastAPI(
     title="Enterprise LLM Security Gateway",
     version="1.0"
 )
+
+app.include_router(gateway_router)
+app.include_router(prompt_router)
+
 
 @app.get("/")
 def home():
