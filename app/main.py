@@ -2,6 +2,7 @@ from fastapi import FastAPI, Header, HTTPException
 from app.auth import create_access_token, verify_token
 from app.api_gateway import router as gateway_router
 from app.prompt_filter import router as prompt_router
+from app.response_filter import filter_response
 
 app = FastAPI(
     title="Enterprise LLM Security Gateway",
@@ -47,3 +48,10 @@ def protected_route(authorization: str = Header(...)):
         "message": "Access Granted",
         "user": payload["sub"]
     }
+
+@app.post("/response-filter")
+def test_response_filter(response: str):
+
+    result = filter_response(response)
+
+    return result

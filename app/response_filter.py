@@ -1,0 +1,20 @@
+def filter_response(response: str):
+
+    blocked_keywords = [
+        "password",
+        "secret",
+        "api_key",
+        "token"
+    ]
+
+    for keyword in blocked_keywords:
+        if keyword.lower() in response.lower():
+            return {
+                "status": "blocked",
+                "message": "Sensitive information detected"
+            }
+
+    return {
+        "status": "safe",
+        "message": response
+    }
