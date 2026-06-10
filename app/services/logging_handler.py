@@ -1,9 +1,16 @@
 import logging
 import json
 from datetime import datetime
+import os
 
-# Standard terminal logging configuration
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app/services/security_audit.log", mode='a'),
+        logging.StreamHandler() 
+    ]
+)
 logger = logging.getLogger("Zaalima-Gateway-Logger")
 
 class AuditLogger:
