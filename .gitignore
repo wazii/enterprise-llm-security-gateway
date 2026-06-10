@@ -3,6 +3,5 @@
 __pycache__/
 *.pyc
 .env
-
 gateway.db
 security.log
