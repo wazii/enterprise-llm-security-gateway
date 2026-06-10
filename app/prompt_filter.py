@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from app.logger import log_event
+from app.database import save_log
 
 router = APIRouter()
 
@@ -21,6 +23,10 @@ def scan_prompt(data: PromptRequest):
 
     for pattern in BLOCKED_PATTERNS:
         if pattern in prompt_lower:
+
+            log_event(f"Prompt Injection Detected: {pattern}")
+            save_log(f"Prompt Injection Detected: {pattern}")
+
             return {
                 "status": "blocked",
                 "reason": pattern
