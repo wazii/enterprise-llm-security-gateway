@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Header, HTTPException, Depends
-from app.auth import create_access_token, verify_token
+from app.auth import (
+    create_access_token,
+    verify_token,
+    create_refresh_token,
+)
 from app.api_gateway import router as gateway_router
 from app.prompt_filter import router as prompt_router
 from app.response_filter import filter_response
@@ -11,11 +15,16 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.auth_middleware import auth_middleware
 from app.logger import log_event
 from app.database import save_log
+from app.dashboard import router as dashboard_router
 
 app = FastAPI(
     title="Enterprise LLM Security Gateway",
     version="1.0"
 )
+
+app.include_router(prompt_router)
+app.include_router(gateway_router)
+app.include_router(dashboard_router, tags=["Dashboard"])
 
 app.add_middleware(
     BaseHTTPMiddleware,
@@ -106,4 +115,27 @@ def test_log():
     return {
         "message": "Log saved successfully"
     }
+
+from app.pii_detector import detect_pii
+from app.anonymizer import anonymize_text
+
+@app.post("/test-pii")
+def test_pii(data: dict):
+
+    text = data.get("text", "")
+
+    findings = detect_pii(text)
+
+    anonymized, mapping = anonymize_text(
+        text,
+        findings
+    )
+
+    return {
+        "original": text,
+        "findings": findings,
+        "anonymized": anonymized,
+        "mapping": mapping
+    }
+
 
