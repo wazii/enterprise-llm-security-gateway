@@ -124,3 +124,36 @@ def test_log():
     return {
         "message": "Log saved successfully to SQLite DB"
     }
+
+from app.database import get_logs
+
+@app.get("/admin/logs")
+def fetch_audit_logs(
+    event_type: str = None, 
+    limit: int = 100, 
+    role: str = Depends(get_role)
+):
+    
+    
+    check_permission(role, "view_dashboard")
+    
+    try:
+        
+        logs = get_logs(event_type=event_type, limit=limit)
+        
+
+        formatted_logs = []
+        for log in logs:
+            formatted_logs.append({
+                "id": log[0],
+                "timestamp": log[1],
+                "log_level": log[2],
+                "event_type": log[3],
+                "message": log[4],
+                "user_id": log[5]
+            })
+        return {"status": "success", "total_logs": len(formatted_logs), "data": formatted_logs}
+        
+    except Exception as e:
+        
+        raise HTTPException(status_code=500, detail=f"Error fetching logs: {str(e)}")
