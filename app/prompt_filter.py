@@ -18,18 +18,24 @@ class PromptRequest(BaseModel):
 
 @router.post("/scan-prompt")
 def scan_prompt(data: PromptRequest):
-
     prompt_lower = data.prompt.lower()
 
     for pattern in BLOCKED_PATTERNS:
         if pattern in prompt_lower:
-
+            
             log_event(f"Prompt Injection Detected: {pattern}")
-            save_log(f"Prompt Injection Detected: {pattern}")
+            
+            
+            save_log(
+                log_level="WARN",
+                event_type="PROMPT_INJECTION",
+                message=f"Prompt Injection Attack Detected! Blocked Pattern: '{pattern}'",
+                user_id="anonymous_user" 
+            )
 
             return {
                 "status": "blocked",
-                "reason": pattern
+                "reason": f"Security policy violation: detected '{pattern}'"
             }
 
     return {
