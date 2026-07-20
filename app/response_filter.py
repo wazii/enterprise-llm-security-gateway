@@ -1,3 +1,7 @@
+from app.logger import log_event
+from app.database import save_log
+
+
 def filter_response(response: str):
 
     blocked_keywords = [
@@ -8,7 +12,9 @@ def filter_response(response: str):
     ]
 
     for keyword in blocked_keywords:
+
         if keyword.lower() in response.lower():
+
             return {
                 "status": "blocked",
                 "message": "Sensitive information detected"

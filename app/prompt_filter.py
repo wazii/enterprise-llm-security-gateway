@@ -5,13 +5,31 @@ from app.database import save_log
 
 router = APIRouter()
 
+
 BLOCKED_PATTERNS = [
     "ignore previous instructions",
+    "ignore all instructions",
+    "forget previous instructions",
+    "forget all rules",
     "reveal system prompt",
-    "act as root",
+    "show system prompt",
+    "act as system",
     "bypass security",
+    "disable safety",
+    "jailbreak",
     "developer mode"
 ]
+
+
+def detect_prompt_injection(prompt: str):
+
+    prompt_lower = prompt.lower()
+
+    for pattern in BLOCKED_PATTERNS:
+        if pattern in prompt_lower:
+            return True
+
+    return False
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -23,15 +41,14 @@ def scan_prompt(data: PromptRequest):
 
     for pattern in BLOCKED_PATTERNS:
         if pattern in prompt_lower:
-
             log_event(f"Prompt Injection Detected: {pattern}")
-            save_log(f"Prompt Injection Detected: {pattern}")
+
+            save_log(
+                "PROMPT_INJECTION",
+                f"Prompt Injection Detected: {pattern}"
+            )
 
             return {
                 "status": "blocked",
                 "reason": pattern
             }
-
-    return {
-        "status": "safe"
-    }

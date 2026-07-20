@@ -16,6 +16,8 @@ from app.auth_middleware import auth_middleware
 from app.logger import log_event
 from app.database import save_log
 from app.dashboard import router as dashboard_router
+from app.api_key_validator import validate_api_key
+
 
 app = FastAPI(
     title="Enterprise LLM Security Gateway",
@@ -118,6 +120,7 @@ def test_log():
 
 from app.pii_detector import detect_pii
 from app.anonymizer import anonymize_text
+from app.deanonymizer import deanonymize_text
 
 @app.post("/test-pii")
 def test_pii(data: dict):
@@ -125,6 +128,13 @@ def test_pii(data: dict):
     text = data.get("text", "")
 
     findings = detect_pii(text)
+
+    # LOG PII EVENT
+    if findings:
+        save_log(
+            "PII_DETECTED",
+            f"Detected {len(findings)} PII entities"
+        )
 
     anonymized, mapping = anonymize_text(
         text,
@@ -138,4 +148,43 @@ def test_pii(data: dict):
         "mapping": mapping
     }
 
+@app.post("/test-deanonymize")
+def test_deanonymize():
 
+    llm_response = (
+        "Hello [PERSON_2], "
+        "your email is [EMAIL_ADDRESS_1]"
+    )
+
+    replacements = {
+        "[PERSON_2]": "John Doe",
+        "[EMAIL_ADDRESS_1]": "john@gmail.com"
+    }
+
+    final_response = deanonymize_text(
+        llm_response,
+        replacements
+    )
+
+    return {
+        "llm_response": llm_response,
+        "final_response": final_response
+    }
+
+@app.post("/test-response-filter")
+def test_response_filter(data: dict):
+
+    response = data.get("response", "")
+
+    result = filter_response(response)
+
+    return result
+
+@app.get("/test-api-key")
+def test_api_key(
+    valid: bool = Depends(validate_api_key)
+):
+
+    return {
+        "status": "API Key Accepted"
+    }
