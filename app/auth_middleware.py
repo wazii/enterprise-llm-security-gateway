@@ -25,6 +25,8 @@ from app.auth import verify_token
 
 async def auth_middleware(request: Request, call_next):
 
+    print("PATH:", request.url.path)
+
     protected_paths = [
         "/protected",
         "/admin-dashboard",
@@ -38,23 +40,12 @@ async def auth_middleware(request: Request, call_next):
         if not auth_header:
             return JSONResponse(
                 status_code=401,
-                content={
-                    "detail": "Authorization header missing"
-                }
+                content={"detail": "Authorization header missing"}
             )
 
         token = auth_header.replace("Bearer ", "")
 
         verify_token(token)
-
-    response = await call_next(request)
-
-    return response
-
-async def auth_middleware(request: Request, call_next):
-
-    print("PATH:", request.url.path)
-    print("HEADERS:", request.headers)
 
     response = await call_next(request)
 
