@@ -250,36 +250,33 @@ uvicorn app.main:app --reload
 
 ---
 
-# 📸 Screenshots
-
 ## Dashboard
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](docs/screenshots/Dashboard.png)
 
 ---
 
 ## Analytics Chart
 
-![Analytics](docs/screenshots/analytics_chart.png)
+![Analytics Chart](docs/screenshots/Analytics_chart.png)
 
 ---
 
 ## Security Events
 
-![Security Events](docs/screenshots/security_events.png)
+![Security Events](docs/screenshots/Security_Events.png)
 
 ---
 
 ## Event Investigation
 
-![Event Investigation](docs/screenshots/event_investigation.png)
+![Event Investigation](docs/screenshots/Event_investigation.png)
 
 ---
 
 ## Investigation Workflow
 
-![Investigation Workflow](docs/screenshots/investigation_workflow.png)
-
+![Investigation Workflow](docs/screenshots/Investigation_workflow.png)
 # 🧪 Testing
 
 The application was tested for the following scenarios:
